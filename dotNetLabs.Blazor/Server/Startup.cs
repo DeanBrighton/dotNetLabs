@@ -108,10 +108,10 @@ namespace dotNetLabs.Blazor.Server
 
 
 
-            // var dataSeeding = new DataSeeding.UsersSeeding(userManager, roleManager, dbContext);
-            // dataSeeding.SeedData();
-            var IdentitySeeding = new IdentityDataSeeder(userManager, roleManager);
-            IdentitySeeding.SeedAsync();
+             var dataSeeding = new DataSeeding.UsersSeeding(userManager, roleManager);
+            dataSeeding.SeedData().Wait();
+            //var IdentitySeeding = new IdentityDataSeeder(userManager, roleManager);
+            //IdentitySeeding.SeedAsync();
 
 
 

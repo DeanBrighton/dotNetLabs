@@ -10,8 +10,8 @@ using dotNetLabs.Blazor.Server.Models;
 namespace dotNetLabs.Blazor.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210108092727_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20210118000252_InitialDBMigration")]
+    partial class InitialDBMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

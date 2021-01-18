@@ -17,19 +17,18 @@ namespace dotNetLabs.Blazor.Server.DataSeeding
         private readonly ApplicationDbContext _dbContext;
 
         public UsersSeeding(UserManager<ApplicationUser> userManager, 
-            RoleManager<IdentityRole> roleManager, 
-            ApplicationDbContext dbContext)
+            RoleManager<IdentityRole> roleManager)
         {
 
             _userManager = userManager;
             _roleManager = roleManager;
-            _dbContext = dbContext;
+            //_dbContext = dbContext;
         }
 
         public async Task SeedData()
         {
 
-            var test = _dbContext.Roles.First();
+            //var test = _dbContext.Roles.First();
 
 
             //var test2 = await _roleManager.FindByNameAsync("owner");

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace dotNetLabs.Blazor.Server.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InitialDBMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
