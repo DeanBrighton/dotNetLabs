@@ -16,7 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\dotNetLaps.Blazor.Server.Infrastructure\dotNetLabs.Blazor.Server.Infrastructure.csproj" />
     <ProjectReference Include="..\..\dotNetLaps.Blazor.Server.Models\dotNetLabs.Blazor.Server.Models.csproj" />
+    <ProjectReference Include="..\..\dotNetLaps.Blazor.Server.Repositories\dotNetLabs.Blazor.Server.Repositories.csproj" />
+    <ProjectReference Include="..\..\dotNetLaps.Blazor.Server.Services\dotNetLabs.Blazor.Server.Services.csproj" />
     <ProjectReference Include="..\Client\dotNetLabs.Blazor.Client.csproj" />
     <ProjectReference Include="..\Shared\dotNetLabs.Blazor.Shared.csproj" />
   </ItemGroup>

@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace dotNetLabs.Blazor.Server.Models
 {
@@ -56,6 +58,60 @@ namespace dotNetLabs.Blazor.Server.Models
 
             base.OnModelCreating(builder);
 
+        }
+
+
+        private string _userId = null;
+
+        public async Task SaveChangesAsync(string userId)
+        {
+            _userId = userId;
+            await SaveChangesAsync();
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            
+            foreach (var item in ChangeTracker.Entries())
+            {
+                if(item.Entity is UserRecord)
+                {
+                    var userRecord = (UserRecord)item.Entity;
+
+                    switch (item.State)
+                    {
+                        case EntityState.Detached:
+                            break;
+                        case EntityState.Unchanged:
+                            break;
+                        case EntityState.Deleted:
+                            break;
+                        case EntityState.Modified:
+                            userRecord.ModificationDate = DateTime.UtcNow;
+                            userRecord.ModifiedByUserId = _userId;
+                            break;
+                        case EntityState.Added:
+                            userRecord.ModificationDate = DateTime.UtcNow;
+                            userRecord.ModifiedByUserId = _userId;
+                            userRecord.CreationDate = DateTime.UtcNow;
+                            userRecord.CreatedByUserId = _userId;
+
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
+
+
+
+
+
+
+
+            }
+
+            return await base.SaveChangesAsync(cancellationToken);
         }
 
 

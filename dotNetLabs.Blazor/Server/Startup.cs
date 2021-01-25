@@ -1,7 +1,11 @@
+using dotNetLabs.Blazor.Server.Infrastructure;
 using dotNetLabs.Blazor.Server.Models;
+using dotNetLabs.Blazor.Server.Repositories;
+using dotNetLabs.Blazor.Server.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -12,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -87,6 +92,45 @@ namespace dotNetLabs.Blazor.Server
 
               });
 
+            services.AddScoped<IUnitOfWork, EfUnitOfWork>();
+            services.AddScoped(sp => new AuthOptions
+            {
+                Audience = Configuration["AuthSettings:Issuer"],
+                Issuer = Configuration["AuthSettings:Issuer"],
+                Key = Configuration["AuthSettings:Key"]
+
+            });
+
+            services.AddHttpContextAccessor();
+            services.AddScoped(sp =>
+            {
+                var httpContext = sp.GetService<IHttpContextAccessor>().HttpContext;
+
+                var identityOptions = new Infrastructure.IdentityOptions();
+
+                if (httpContext.User.Identity.IsAuthenticated)
+                {
+                    string id = httpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    string firstname = httpContext.User.FindFirst(ClaimTypes.GivenName).Value;
+                    string lastname = httpContext.User.FindFirst(ClaimTypes.Surname).Value;
+                    string email = httpContext.User.FindFirst(ClaimTypes.Email).Value;
+                    string role = httpContext.User.FindFirst(ClaimTypes.Role).Value;
+
+                    identityOptions.UserID = id;
+                    identityOptions.FullName = $"{firstname} {lastname}";
+                    identityOptions.Email = email;
+                    identityOptions.IsAdmin = role == "Admin" ? true : false;
+
+                }
+
+                return identityOptions;
+            });
+
+            //TODO: Using attributes to register services.
+            services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<IPlaylistService, PlaylistService>();
+
+
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
@@ -110,6 +154,8 @@ namespace dotNetLabs.Blazor.Server
 
              var dataSeeding = new DataSeeding.UsersSeeding(userManager, roleManager);
             dataSeeding.SeedData().Wait();
+
+
             //var IdentitySeeding = new IdentityDataSeeder(userManager, roleManager);
             //IdentitySeeding.SeedAsync();
 

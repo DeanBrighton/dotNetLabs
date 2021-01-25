@@ -28,10 +28,6 @@ namespace dotNetLabs.Blazor.Server.DataSeeding
         public async Task SeedData()
         {
 
-            //var test = _dbContext.Roles.First();
-
-
-            //var test2 = await _roleManager.FindByNameAsync("owner");
             //Check and create roles
             try
             {

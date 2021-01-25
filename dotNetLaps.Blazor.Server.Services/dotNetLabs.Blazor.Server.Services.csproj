@@ -4,4 +4,15 @@
     <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\dotNetLabs.Blazor\Shared\dotNetLabs.Blazor.Shared.csproj" />
+    <ProjectReference Include="..\dotNetLaps.Blazor.Server.Infrastructure\dotNetLabs.Blazor.Server.Infrastructure.csproj" />
+    <ProjectReference Include="..\dotNetLaps.Blazor.Server.Models\dotNetLabs.Blazor.Server.Models.csproj" />
+    <ProjectReference Include="..\dotNetLaps.Blazor.Server.Repositories\dotNetLabs.Blazor.Server.Repositories.csproj" />
+  </ItemGroup>
+
 </Project>
