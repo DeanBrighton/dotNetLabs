@@ -34,6 +34,36 @@ namespace dotNetLabs.Blazor.Server.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("GetAll")]
+        public IActionResult GetAll(int pageNumber, int pageSize)
+        {
+            var result = _playlistService.GetAllPlaylists(pageNumber, pageSize);
+            return Ok(result);
+
+        }
+
+        [HttpPut("Update")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update(PlaylistDetail model)
+        {
+            var result = await _playlistService.UpdateAsync(model);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
+        [HttpDelete("Delete")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update(string id)
+        {
+            var result = await _playlistService.RemoveAsyc(id);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
 
     }
 }
