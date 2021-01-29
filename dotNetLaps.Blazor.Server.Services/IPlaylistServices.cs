@@ -18,8 +18,6 @@ namespace dotNetLabs.Blazor.Server.Services
         Task<OperationResponse<PlaylistDetail>> RemoveAsyc(string id);
         CollectionResponse<PlaylistDetail> GetAllPlaylists(int pageNumber = 1, int pageSize = 10);
 
-
-
     }
 
     public class PlaylistService : IPlaylistService
@@ -32,7 +30,6 @@ namespace dotNetLabs.Blazor.Server.Services
             _unitOfWork = unitOfWork;
             _identity = identity;
         }
-
 
         public async Task<OperationResponse<PlaylistDetail>> CreateAsync(PlaylistDetail model)
         {

@@ -2,6 +2,7 @@ using dotNetLabs.Blazor.Server.Infrastructure;
 using dotNetLabs.Blazor.Server.Models;
 using dotNetLabs.Blazor.Server.Repositories;
 using dotNetLabs.Blazor.Server.Services;
+using dotNetLabs.Blazor.Server.Services.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -105,7 +106,6 @@ namespace dotNetLabs.Blazor.Server
             services.AddScoped(sp =>
             {
                 var httpContext = sp.GetService<IHttpContextAccessor>().HttpContext;
-
                 var identityOptions = new Infrastructure.IdentityOptions();
 
                 if (httpContext.User.Identity.IsAuthenticated)
@@ -129,6 +129,9 @@ namespace dotNetLabs.Blazor.Server
             //TODO: Using attributes to register services.
             services.AddScoped<IUsersService, UsersService>();
             services.AddScoped<IPlaylistService, PlaylistService>();
+            services.AddScoped<IVideoService, VideoService>();
+            services.AddScoped<IFileStorageService, LocalFileStorageService>();
+
 
 
             services.AddControllersWithViews();
@@ -150,7 +153,7 @@ namespace dotNetLabs.Blazor.Server
                 app.UseHsts();
             }
 
-
+            
 
              var dataSeeding = new DataSeeding.UsersSeeding(userManager, roleManager);
             dataSeeding.SeedData().Wait();
