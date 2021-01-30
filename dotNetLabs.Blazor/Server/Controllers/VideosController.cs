@@ -32,5 +32,34 @@ namespace dotNetLabs.Blazor.Server.Controllers
 
         }
 
+        [HttpGet("GetAll")]
+        public IActionResult GetAll(string query="", int pageNumber = 1, int pageSize=10)
+        {
+            var result =  _videoService.GetAllVideos(query,pageNumber, pageSize);
+            return Ok(result);
+        }
+
+        [HttpPut("Update")]
+        public async Task<IActionResult> Update([FromForm] VideoDetail model)
+        {
+            var result = await _videoService.UpdateAsync(model);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
+        [HttpDelete("Delete")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var result = await _videoService.RemoveAsyc(id);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
+
+
     }
 }

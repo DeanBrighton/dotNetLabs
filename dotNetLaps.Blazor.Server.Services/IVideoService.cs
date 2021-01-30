@@ -1,4 +1,5 @@
-﻿using dotNetLabs.Blazor.Server.Infrastructure;
+﻿using AutoMapper;
+using dotNetLabs.Blazor.Server.Infrastructure;
 using dotNetLabs.Blazor.Server.Models;
 using dotNetLabs.Blazor.Server.Repositories;
 using dotNetLabs.Blazor.Server.Services.Utilities;
@@ -17,7 +18,7 @@ namespace dotNetLabs.Blazor.Server.Services
         Task<OperationResponse<VideoDetail>> CreateAsync(VideoDetail model);
         Task<OperationResponse<VideoDetail>> UpdateAsync(VideoDetail model);
         Task<OperationResponse<VideoDetail>> RemoveAsyc(string id);
-        CollectionResponse<VideoDetail> GetAllVideos(int pageNumber = 1, int pageSize = 10);
+        CollectionResponse<VideoDetail> GetAllVideos(string query, int pageNumber = 1, int pageSize = 10);
     }
 
     public class VideoService : IVideoService
@@ -25,16 +26,21 @@ namespace dotNetLabs.Blazor.Server.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IdentityOptions _identity;
         private readonly IFileStorageService _storage;
-
+        private readonly EnvironmentOptions _env;
+        private readonly IMapper _mapper;
 
 
         public VideoService(IUnitOfWork unitOfWork, 
             IdentityOptions identity, 
-            IFileStorageService storage)
+            IFileStorageService storage,
+            EnvironmentOptions env,
+            IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _identity = identity;
             _storage = storage;
+            _env = env;
+            _mapper = mapper;
         }
 
 
@@ -99,7 +105,7 @@ namespace dotNetLabs.Blazor.Server.Services
 
             model.Id = video.Id;
             model.ThumbFile = null;
-            model.ThumbURL = $"https://localhost:5001/{thumbUrl}";
+            model.ThumbURL = $"{_env.ApiUrl}/{thumbUrl}";
 
 
             return new OperationResponse<VideoDetail>
@@ -112,19 +118,135 @@ namespace dotNetLabs.Blazor.Server.Services
 
         }
 
-        public CollectionResponse<VideoDetail> GetAllVideos(int pageNumber = 1, int pageSize = 10)
+        public CollectionResponse<VideoDetail> GetAllVideos(string query, int pageNumber = 1, int pageSize = 10)
         {
-            throw new NotImplementedException();
+
+            if (pageNumber < 1)
+                pageNumber = 1;
+
+            if (pageSize < 5)
+                pageSize = 5;
+
+            if (pageSize > 50)
+                pageSize = 50;
+
+            var videos = _unitOfWork.Videos.GetAll();
+
+            int videoscount = videos.Count();
+
+            var videosInPage = videos
+                .Where(v => v.Title.Contains(query,StringComparison.InvariantCultureIgnoreCase)
+                            || v.Description.Contains(query,StringComparison.InvariantCultureIgnoreCase))
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => _mapper.Map<VideoDetail>(p));
+
+
+            int pagesCount = videoscount / pageSize;
+            if ((videoscount % pageSize) != 0)
+                pagesCount++;
+
+            return new CollectionResponse<VideoDetail>
+            {
+                IsSuccess = true,
+                Message = "Videos retreived successfully",
+                Records = videosInPage.ToArray(),
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                PageCount = pagesCount
+            };
+
+
         }
 
-        public Task<OperationResponse<VideoDetail>> RemoveAsyc(string id)
+        public async Task<OperationResponse<VideoDetail>> RemoveAsyc(string id)
         {
-            throw new NotImplementedException();
+            var video = await _unitOfWork.Videos.GetByIdAsync(id);
+            if (video == null)
+                return new OperationResponse<VideoDetail>
+                {
+                    IsSuccess = false,
+                    Data = null,
+                    Message = "Video not found"
+                };
+
+            _unitOfWork.Videos.RemoveTags(video);
+            //TODO: Remove comments and playlist assignments
+
+            _unitOfWork.Videos.Remove(video);
+            _storage.RemoveFile(video.ThumbURL);
+
+
+            await _unitOfWork.CommitChangesAsync(_identity.UserID);
+
+            return new OperationResponse<VideoDetail>
+            {
+                IsSuccess = true,
+                Message = "Video has been removed",
+                Data = _mapper.Map<VideoDetail>(video),
+            };
+
         }
 
-        public Task<OperationResponse<VideoDetail>> UpdateAsync(VideoDetail model)
+        public async Task<OperationResponse<VideoDetail>> UpdateAsync(VideoDetail model)
         {
-            throw new NotImplementedException();
+
+            var video = await _unitOfWork.Videos.GetByIdAsync(model.Id);
+            if (video == null)
+                return new OperationResponse<VideoDetail>
+                {
+                    IsSuccess = false,
+                    Data = null,
+                    Message = "Video not found"
+                };
+
+            //Check the thumb image
+            var thumbUrl = video.ThumbURL;
+            if(model.ThumbFile != null)
+            {
+                try
+                {
+                    thumbUrl = await _storage.SaveFileAsync(model.ThumbFile, "Uploads");
+                    _storage.RemoveFile(video.ThumbURL);
+
+                }
+                catch (BadImageFormatException)
+                {
+                    return new OperationResponse<VideoDetail>
+                    {
+                        IsSuccess = false,
+                        Message = "Please upload a thumbnail image."
+                    };
+                }
+            }
+
+            _unitOfWork.Videos.RemoveTags(video);
+
+            video.Title = model.Title;
+            video.Description = model.Description;
+            video.VideoPrivacy = model.VideoPrivacy;
+            video.Category = model.Category;
+            video.PublishingDate = model.PublishingDate;
+            video.ThumbURL = thumbUrl;
+            video.Tags = model.Tags?.Select(t => new Tag
+            {
+                Name = t,
+
+            }).ToList();
+
+
+            await _unitOfWork.CommitChangesAsync(_identity.UserID);
+
+            model.ThumbFile = null;
+            model.ThumbURL = $"{_env.ApiUrl}/{thumbUrl}";
+
+            return new OperationResponse<VideoDetail>
+            {
+                IsSuccess = true,
+                Message = "Video has been updated",
+                Data = model
+            };
+
         }
     }
 }

@@ -18,6 +18,7 @@ namespace dotNetLabs.Blazor.Server.Repositories
 
         Task<Video> GetByTitleAsync(string name);
 
+        void RemoveTags(Video video);
 
     }
 

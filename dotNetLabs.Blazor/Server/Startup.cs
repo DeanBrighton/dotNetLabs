@@ -1,5 +1,7 @@
+using AutoMapper;
 using dotNetLabs.Blazor.Server.Infrastructure;
 using dotNetLabs.Blazor.Server.Models;
+using dotNetLabs.Blazor.Server.Profiles;
 using dotNetLabs.Blazor.Server.Repositories;
 using dotNetLabs.Blazor.Server.Services;
 using dotNetLabs.Blazor.Server.Services.Utilities;
@@ -126,12 +128,28 @@ namespace dotNetLabs.Blazor.Server
                 return identityOptions;
             });
 
+            services.AddSingleton(sp =>
+            {
+                return new EnvironmentOptions()
+                {
+                    ApiUrl = Configuration["ApiURL"]
+                };
+                                
+            });
+
+
+
             //TODO: Using attributes to register services.
             services.AddScoped<IUsersService, UsersService>();
             services.AddScoped<IPlaylistService, PlaylistService>();
             services.AddScoped<IVideoService, VideoService>();
             services.AddScoped<IFileStorageService, LocalFileStorageService>();
 
+            services.AddSingleton(provider => new MapperConfiguration(config =>
+            {
+                config.AddProfile(new VideoProfile(provider.GetService<EnvironmentOptions>()));
+
+            }).CreateMapper());
 
 
             services.AddControllersWithViews();

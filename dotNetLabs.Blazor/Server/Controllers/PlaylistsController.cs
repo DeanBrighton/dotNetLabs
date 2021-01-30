@@ -55,7 +55,7 @@ namespace dotNetLabs.Blazor.Server.Controllers
 
         [HttpDelete("Delete")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(string id)
+        public async Task<IActionResult> Delete(string id)
         {
             var result = await _playlistService.RemoveAsyc(id);
             if (result.IsSuccess)
