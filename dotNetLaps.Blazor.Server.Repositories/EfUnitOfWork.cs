@@ -59,6 +59,17 @@ namespace dotNetLabs.Blazor.Server.Repositories
             }
         }
 
+        private ICommentRepository _comments;
+        public ICommentRepository Comments
+        {
+            get
+            {
+                if (_comments == null)
+                    _comments = new CommentRepository(_db);
+
+                return _comments;
+            }
+        }
 
 
         public async Task CommitChangesAsync(string userId)

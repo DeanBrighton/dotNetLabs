@@ -19,6 +19,10 @@ namespace dotNetLabs.Blazor.Server.Services
         Task<OperationResponse<VideoDetail>> UpdateAsync(VideoDetail model);
         Task<OperationResponse<VideoDetail>> RemoveAsyc(string id);
         CollectionResponse<VideoDetail> GetAllVideos(string query, int pageNumber = 1, int pageSize = 10);
+
+        Task<OperationResponse<VideoDetail>> GetVideoDetailAsync(string videoId);
+
+
     }
 
     public class VideoService : IVideoService
@@ -28,19 +32,22 @@ namespace dotNetLabs.Blazor.Server.Services
         private readonly IFileStorageService _storage;
         private readonly EnvironmentOptions _env;
         private readonly IMapper _mapper;
+        private readonly ICommentService _commentService;
 
 
         public VideoService(IUnitOfWork unitOfWork, 
             IdentityOptions identity, 
             IFileStorageService storage,
             EnvironmentOptions env,
-            IMapper mapper)
+            IMapper mapper,
+            ICommentService commentService)
         {
             _unitOfWork = unitOfWork;
             _identity = identity;
             _storage = storage;
             _env = env;
             _mapper = mapper;
+            _commentService = commentService;
         }
 
 
@@ -154,6 +161,34 @@ namespace dotNetLabs.Blazor.Server.Services
                 PageNumber = pageNumber,
                 PageSize = pageSize,
                 PageCount = pagesCount
+            };
+
+
+        }
+
+        public async Task<OperationResponse<VideoDetail>> GetVideoDetailAsync(string videoId)
+        {
+            var video = await _unitOfWork.Videos.GetByIdAsync(videoId);
+            if (video == null)
+                return new OperationResponse<VideoDetail>
+                {
+                    IsSuccess = false,
+                    Message = "Video cannot be found"
+                };
+
+
+            var videoDetail = _mapper.Map<VideoDetail>(video);
+
+            //get all the comments
+
+            videoDetail.Comments = _commentService.GetVideoComments(videoId);
+
+
+            return new OperationResponse<VideoDetail>
+            {
+                IsSuccess = true,
+                Message = "Video information retrieved",
+                Data = videoDetail
             };
 
 

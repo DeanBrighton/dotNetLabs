@@ -11,6 +11,8 @@ namespace dotNetLabs.Blazor.Server.Repositories
         IPlaylistRepository Playlists { get; }
         IVideosRepository Videos { get; }
 
+        ICommentRepository Comments { get; }
+
         Task CommitChangesAsync(string userId);
 
     }

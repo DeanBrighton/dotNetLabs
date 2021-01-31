@@ -41,9 +41,9 @@ namespace dotNetLabs.Blazor.Shared
 
         //public virtual List<PlaylistVideo> PlaylistVideos { get; set; }
 
-        //public virtual List<Comment> Comments { get; set; }
+                public virtual List<string> Tags { get; set; }
 
-        public virtual List<string> Tags { get; set; }
+        public IEnumerable<CommentDetail> Comments { get; set; }
 
 
     }

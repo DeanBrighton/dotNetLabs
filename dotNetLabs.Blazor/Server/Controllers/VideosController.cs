@@ -39,6 +39,17 @@ namespace dotNetLabs.Blazor.Server.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetVideo(string id)
+        {
+            var result = await _videoService.GetVideoDetailAsync(id);
+            if (!result.IsSuccess)
+                return NotFound();
+            return Ok(result);
+        }
+
+
+
         [HttpPut("Update")]
         public async Task<IActionResult> Update([FromForm] VideoDetail model)
         {
