@@ -1,5 +1,6 @@
 ﻿using dotNetLabs.Blazor.Server.Services;
 using dotNetLabs.Blazor.Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,7 @@ namespace dotNetLabs.Blazor.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CommentsController : ControllerBase
     {
         private readonly ICommentService _commentService;
@@ -21,7 +23,8 @@ namespace dotNetLabs.Blazor.Server.Controllers
             
         }
 
-
+        [ProducesResponseType(200, Type = typeof(OperationResponse<CommentDetail>))]
+        [ProducesResponseType(400, Type = typeof(OperationResponse<CommentDetail>))]
         [HttpPost("Create")]
         public async Task<IActionResult> Create(CommentDetail model)
         {
@@ -32,6 +35,8 @@ namespace dotNetLabs.Blazor.Server.Controllers
             return BadRequest(result);
         }
 
+        [ProducesResponseType(200, Type = typeof(OperationResponse<CommentDetail>))]
+        [ProducesResponseType(400, Type = typeof(OperationResponse<CommentDetail>))]
         [HttpPut("Edit")]
         public async Task<IActionResult> Edit(CommentDetail model)
         {
@@ -42,7 +47,8 @@ namespace dotNetLabs.Blazor.Server.Controllers
             return BadRequest(result);
         }
 
-
+        [ProducesResponseType(200, Type = typeof(OperationResponse<CommentDetail>))]
+        [ProducesResponseType(400, Type = typeof(OperationResponse<CommentDetail>))]
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {

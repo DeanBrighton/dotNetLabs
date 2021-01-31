@@ -154,6 +154,7 @@ namespace dotNetLabs.Blazor.Server
 
             }).CreateMapper());
 
+            services.AddSwaggerGen();
 
             services.AddControllersWithViews();
             services.AddRazorPages();
@@ -189,6 +190,12 @@ namespace dotNetLabs.Blazor.Server
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(swagger =>
+            {
+                swagger.SwaggerEndpoint("/swagger/v1/swagger.json", "dotNet Labs API");
+            });
 
             app.UseRouting();
 

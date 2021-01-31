@@ -21,6 +21,8 @@ namespace dotNetLabs.Blazor.Server.Controllers
             _userService = usersService;
         }
 
+        [ProducesResponseType(200,Type = typeof(LoginResponse))]
+        [ProducesResponseType(400, Type = typeof(LoginResponse))]
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginRequest model)
         {
@@ -33,6 +35,8 @@ namespace dotNetLabs.Blazor.Server.Controllers
             return BadRequest(result);
         }
 
+        [ProducesResponseType(200, Type = typeof(OperationResponse<string>))]
+        [ProducesResponseType(400, Type = typeof(OperationResponse<string>))]
         [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterRequest model)
         {

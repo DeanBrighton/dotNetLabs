@@ -16,6 +16,10 @@ namespace dotNetLabs.Blazor.Server.Repositories
 
         Task<Playlist> GetByIdAsync(string id);
 
+        public IEnumerable<Video> GetAllVideosInPlaylist(string id);
+
+        public void RemoveVideoFromPlaylist(PlaylistVideo playlistVideo);
+        public Task AddVideoToPlaylistAsync(PlaylistVideo playlistVideo);
 
     }
 

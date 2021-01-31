@@ -8,13 +8,14 @@ namespace dotNetLabs.Blazor.Server.Mappers
 {
     public static class PlaylistMapper
     {
-        public static PlaylistDetail ToPlayListDetail(this Playlist playlist)
+        public static PlaylistDetail ToPlayListDetail(this Playlist playlist,IEnumerable<VideoDetail> playlistVideos=null, bool includeVideos = false)
         {
             return new PlaylistDetail
             {
                 Id = playlist.Id,
                 Description = playlist.Description,
-                Name = playlist.Name
+                Name = playlist.Name,
+                Videos = includeVideos ? playlistVideos : null
             };
         }
 

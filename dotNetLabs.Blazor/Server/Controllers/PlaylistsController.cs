@@ -12,7 +12,7 @@ namespace dotNetLabs.Blazor.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class PlaylistsController : ControllerBase
     {
         private readonly IPlaylistService _playlistService;
@@ -23,8 +23,10 @@ namespace dotNetLabs.Blazor.Server.Controllers
 
         }
 
+
+        [ProducesResponseType(200, Type = typeof(OperationResponse<PlaylistDetail>))]
+        [ProducesResponseType(400, Type = typeof(OperationResponse<PlaylistDetail>))]
         [HttpPost("Create")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(PlaylistDetail model)
         {
             var result = await _playlistService.CreateAsync(model);
@@ -34,16 +36,9 @@ namespace dotNetLabs.Blazor.Server.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("GetAll")]
-        public IActionResult GetAll(int pageNumber, int pageSize)
-        {
-            var result = _playlistService.GetAllPlaylists(pageNumber, pageSize);
-            return Ok(result);
-
-        }
-
+        [ProducesResponseType(200, Type = typeof(OperationResponse<PlaylistDetail>))]
+        [ProducesResponseType(400, Type = typeof(OperationResponse<PlaylistDetail>))]
         [HttpPut("Update")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(PlaylistDetail model)
         {
             var result = await _playlistService.UpdateAsync(model);
@@ -53,8 +48,9 @@ namespace dotNetLabs.Blazor.Server.Controllers
             return BadRequest(result);
         }
 
+        [ProducesResponseType(200, Type = typeof(OperationResponse<PlaylistDetail>))]
+        [ProducesResponseType(400, Type = typeof(OperationResponse<PlaylistDetail>))]
         [HttpDelete("Delete")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string id)
         {
             var result = await _playlistService.RemoveAsyc(id);
@@ -64,6 +60,40 @@ namespace dotNetLabs.Blazor.Server.Controllers
             return BadRequest(result);
         }
 
+        [ProducesResponseType(200, Type = typeof(OperationResponse<VideoDetail>))]
+        [ProducesResponseType(400, Type = typeof(OperationResponse<VideoDetail>))]
+        [HttpPost("AssignOrRemoveVideo")]
+        public async Task<IActionResult> AssignOrRemoveFromPlaylist(PlaylistVideoRequest model)
+        {
+            var result = await _playlistService.AssignOrRemoveVideoFromPlaylistAsync(model);
+            if (result.IsSuccess)
+                return Ok(result);
 
+            return BadRequest(result);
+        }
+
+        [ProducesResponseType(200, Type = typeof(OperationResponse<PlaylistDetail>))]
+        [ProducesResponseType(400)]
+        [AllowAnonymous]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(string id)
+        {
+            var result = await _playlistService.GetSinglePlaylistAsync(id);
+            if (result.IsSuccess)
+                return Ok(result);
+
+            return BadRequest(result);
+        }
+
+        [ProducesResponseType(200, Type = typeof(OperationResponse<PlaylistDetail>))]
+        [ProducesResponseType(400, Type = typeof(OperationResponse<PlaylistDetail>))]
+        [AllowAnonymous]
+        [HttpGet("GetAll")]
+        public IActionResult GetAll(int pageNumber, int pageSize)
+        {
+            var result = _playlistService.GetAllPlaylists(pageNumber, pageSize);
+            return Ok(result);
+
+        }
     }
 }

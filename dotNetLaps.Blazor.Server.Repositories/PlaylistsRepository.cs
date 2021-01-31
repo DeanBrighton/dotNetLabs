@@ -1,5 +1,7 @@
 ﻿using dotNetLabs.Blazor.Server.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace dotNetLabs.Blazor.Server.Repositories
@@ -26,7 +28,10 @@ namespace dotNetLabs.Blazor.Server.Repositories
 
         public async Task<Playlist> GetByIdAsync(string id)
         {
-            return await _db.Playlists.FindAsync(id);
+            return await _db.Playlists
+                .Include(p => p.PlaylistVideos)
+                .ThenInclude(p => p.Video)
+                .SingleOrDefaultAsync(p => p.Id == id);
         }
 
         public void Remove(Playlist playlist)
@@ -34,8 +39,24 @@ namespace dotNetLabs.Blazor.Server.Repositories
             _db.Playlists.Remove(playlist);
         }
 
+        public IEnumerable<Video> GetAllVideosInPlaylist(string id)
+        {
+            return _db.PlaylistVideos
+                .Include(pv => pv.Video)
+                .Where(p => p.PlaylistId == id)
+                .Select(pv => pv.Video);
 
+        }
 
+        public void RemoveVideoFromPlaylist(PlaylistVideo playlistVideo)
+        {
+            _db.PlaylistVideos.Remove(playlistVideo);
+        }
+
+        public async Task AddVideoToPlaylistAsync(PlaylistVideo playlistVideo)
+        {
+            await _db.PlaylistVideos.AddAsync(playlistVideo);
+        }
 
     }
 

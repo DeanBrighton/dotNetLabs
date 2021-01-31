@@ -14,7 +14,6 @@ namespace dotNetLabs.Blazor.Server.DataSeeding
 
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly ApplicationDbContext _dbContext;
 
         public UsersSeeding(UserManager<ApplicationUser> userManager, 
             RoleManager<IdentityRole> roleManager)
@@ -22,7 +21,7 @@ namespace dotNetLabs.Blazor.Server.DataSeeding
 
             _userManager = userManager;
             _roleManager = roleManager;
-            //_dbContext = dbContext;
+
         }
 
         public async Task SeedData()
