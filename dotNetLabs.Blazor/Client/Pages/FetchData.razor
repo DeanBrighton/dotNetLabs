@@ -2,9 +2,19 @@
 @using dotNetLabs.Blazor.Shared
 @inject HttpClient Http
 
+@attribute [Authorize]
+
 <h1>Weather forecast</h1>
 
 <p>This component demonstrates fetching data from the server.</p>
+
+
+<!--This is the authorized view taking advantage of the claims in the user context. -->
+<AuthorizeView>
+    <h2>Welcome @context.User.FindFirst(System.Security.Claims.ClaimTypes.GivenName).Value</h2>
+
+</AuthorizeView>
+
 
 @if (forecasts == null)
 {
