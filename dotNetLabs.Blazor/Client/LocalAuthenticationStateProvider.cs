@@ -29,10 +29,11 @@ namespace dotNetLabs.Blazor.Client
                     var handler = new JwtSecurityTokenHandler();
                     var jwt = handler.ReadJwtToken(accessToken);
                     var identity = new ClaimsIdentity(jwt.Claims, "Bearer");
-                    var user = new ClaimsPrincipal(identity);
 
+                    var user = new ClaimsPrincipal(identity);
                     var state = new AuthenticationState(user);
 
+                    //Notify the application of the state change
                     NotifyAuthenticationStateChanged(Task.FromResult(state));
 
                     //return the user with all the claims.
