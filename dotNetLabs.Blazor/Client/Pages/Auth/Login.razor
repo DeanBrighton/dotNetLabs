@@ -51,7 +51,7 @@
                 await authStateProvider.GetAuthenticationStateAsync();
 
                 // Redirect the user to the home page
-                Console.WriteLine("Loged successfully!");
+                Console.WriteLine("Log in successfully!");
                 navigationManager.NavigateTo("/");
             }
             else
@@ -73,4 +73,5 @@
         if (authState.User.Identity.IsAuthenticated)
             navigationManager.NavigateTo("/");
     }
+
 }

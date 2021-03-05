@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components
 @inherits LayoutComponentBase
-
+@inject AuthenticationStateProvider authStateProvider
+@inject NavigationManager navigationManager 
 
 <BFUStack Horizontal="true" Style="width:100%;">
     <BFUResponsiveLayout MinWidth="ResponsiveMode.Medium.ToMinCssValue()">
@@ -37,13 +38,16 @@
                                 }
                                 <BFUPrimaryButton Text="@greeting"
                                                       Split="true"
-                                                      OnClick=@(() => OnClickHandler("Logout"))
+                                                      OnClick=@( () =>  OnClickHandler("Logout"))
                                                       MenuItems="MenuProperties"/>
 
                             </Authorized>
                             <NotAuthorized>
-                                
-
+                                <BFUPrimaryButton Text="Register"
+                                                  Split="true"
+                                                  MenuItems="AccountMenuProperties"
+                                                  OnClick=@(() =>  navigationManager.NavigateTo("/auth/register") ) />
+                                                  
                             </NotAuthorized>
                         </AuthorizeView>
 
@@ -75,10 +79,10 @@
 
 @code {
 
-    [Inject]
-    public ThemeProvider ThemeProvider { get; set; }
+        [Inject]
+        public ThemeProvider ThemeProvider { get; set; }
 
-    private bool? customTheme;
+        private bool? customTheme;
 
     private Rule ScrollbarRule = new Rule();
     //private ICollection<IRule> DarkThemeLocalRules { get; set; } = new System.Collections.Generic.List<IRule>();
@@ -261,13 +265,32 @@
 
 
     IEnumerable<BFUContextualMenuItem> MenuProperties;
+    IEnumerable<BFUContextualMenuItem> AccountMenuProperties;
 
     protected override Task OnInitializedAsync()
     {
         MenuProperties = new System.Collections.Generic.List<BFUContextualMenuItem>()
-{
-            new BFUContextualMenuItem() { Key = "Logout", Text = "Logout", IconName="UserOptional"}
-        };
+            {
+                new BFUContextualMenuItem()
+                {
+                    Key = "Logout",
+                    Text = "Logout",
+                    IconName="User",
+                    OnClick= async (e) => await LogoutAsync(e)
+                }
+            };
+
+        AccountMenuProperties = new System.Collections.Generic.List<BFUContextualMenuItem>()
+            {
+                new BFUContextualMenuItem()
+                {
+                    Key = "login",
+                    Text = "Login",
+                    IconName="UserOptional",
+                    OnClick = (e) => navigationManager.NavigateTo("/auth/login")
+                }
+            };
+
 
         return base.OnInitializedAsync();
     }
@@ -278,4 +301,13 @@
         Console.WriteLine(button);
 
     }
+
+    private async Task LogoutAsync(ItemClickedArgs e)
+    {
+        var localAuthStateProvider = (LocalAuthenticationStateProvider)authStateProvider;
+        await localAuthStateProvider.LogOutAsync();
+        navigationManager.NavigateTo("/auth/login");
+
+    }
+
 }

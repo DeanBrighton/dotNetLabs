@@ -96,6 +96,14 @@ namespace dotNetLabs.Blazor.Server
               });
 
             services.AddScoped<IUnitOfWork, EfUnitOfWork>();
+            //TODO: Using attributes to register services.
+            services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<IPlaylistService, PlaylistService>();
+            services.AddScoped<IVideoService, VideoService>();
+            services.AddScoped<ICommentService, CommentService>();
+            services.AddScoped<IFileStorageService, LocalFileStorageService>();
+
+
             services.AddScoped(sp => new AuthOptions
             {
                 Audience = Configuration["AuthSettings:Issuer"],
@@ -136,16 +144,6 @@ namespace dotNetLabs.Blazor.Server
                 };
                                 
             });
-
-
-
-            //TODO: Using attributes to register services.
-            services.AddScoped<IUsersService, UsersService>();
-            services.AddScoped<IPlaylistService, PlaylistService>();
-            services.AddScoped<IVideoService, VideoService>();
-            services.AddScoped<ICommentService, CommentService>();
-
-            services.AddScoped<IFileStorageService, LocalFileStorageService>();
 
 
             services.AddSingleton(provider => new MapperConfiguration(config =>
