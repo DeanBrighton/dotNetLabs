@@ -1,0 +1,19 @@
+NavMenu:
+  Videos: Videos
+  Playlists: Wiedergabelisten
+  Management: Management
+Auth:
+  Welcome: Willkommen
+  Register: Registrieren
+  Login: einloggen
+  Email: E-Mail
+  Password: Passwort
+  ConfirmPassword: Passwort bestätigen
+  Logout: Logout
+Login:
+  Welcome: Willkommen bei
+  Subtitle: Bitte melden Sie sich mit Ihrem Konto an
+Register:
+  Subtitle: Erstellen Sie Ihr neues Konto, indem Sie einfach das Formular ausfüllen
+  Firstname: Vorname
+  Lastname: Nachname

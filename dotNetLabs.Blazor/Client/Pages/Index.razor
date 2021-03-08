@@ -1,8 +1,12 @@
 ﻿@page "/"
+@inject ILanguageContainerService language
+
 
 <h1>Hello, world!</h1>
 
 
 <BFUStack Horizontal="true" Tokens=@(new BFUStackTokens() { ChildrenGap = new[] { 40.0 } })>
-    <BFUPrimaryButton Text="Primary Button" />
+    <BFUPrimaryButton Text="English" @onclick='() => language.SetLanguage(System.Globalization.CultureInfo.GetCultureInfo("en-US"))'/>
+    <BFUPrimaryButton Text="German" @onclick='() => language.SetLanguage(System.Globalization.CultureInfo.GetCultureInfo("de-DE"))' />
+    <BFUPrimaryButton Text="French" @onclick='() => language.SetLanguage(System.Globalization.CultureInfo.GetCultureInfo("fr-FR"))' />
 </BFUStack>

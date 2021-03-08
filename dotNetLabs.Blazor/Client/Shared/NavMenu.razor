@@ -1,4 +1,7 @@
 ﻿
+@inject ILanguageContainerService Language
+
+
 <BFUStack Horizontal="false" VerticalFill="true" Style="overflow:hidden;">
     <BFUStackItem Grow="0" VerticalFill="false" Align="Alignment.Center">
         <div class="top-row">
@@ -9,9 +12,9 @@
     <BFUStackItem VerticalFill="true" Style="overflow-y:auto;">
         <BFUNav>
             <BFUNavLinkGroup Name="dotNetLabs" CollapseByDefault="false">
-                <BFUNavLink Name="Videos" Url="buttonsPage" Id="buttonsPage" OnClick=@OnLinkClicked />
-                <BFUNavLink Name="Playlists" Url="checkboxPage" Id="checkboxPage" OnClick=@OnLinkClicked />
-                <BFUNavLink Name="Management" Url="checkboxPage" Id="checkboxPage"  OnClick=@OnLinkClicked />
+                <BFUNavLink Name="@Language["NavMenu:Videos"]" Url="videos" Id="Videos" />
+                <BFUNavLink Name="@Language["NavMenu:Playlists"]" Url="playlists" Id="Playlists"  />
+                <BFUNavLink Name="@Language["NavMenu:Management"]" Url="management" Id="Management"  />
             </BFUNavLinkGroup>
         </BFUNav>
     </BFUStackItem>
@@ -29,4 +32,11 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+
+    protected override void OnInitialized()
+    {
+        Language.InitLocalizedComponent(this);
+        base.OnInitialized();
+    }
+
 }

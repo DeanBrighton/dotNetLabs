@@ -4,10 +4,11 @@
 @inject Blazored.LocalStorage.ILocalStorageService storageService
 @inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager navigationManager
+@inject ILanguageContainerService Language
 
 
-<h3>Welcome to dotNet Labs</h3>
-<p>Please log in with your account</p>
+<h3>@Language["Login:Welcome"] dotNet Labs</h3>
+<p>@Language["Login:Subtitle"]</p>
 
 <EditForm Model="model" OnValidSubmit="@LoginUserAsync">
     <div class="textFieldDiv">
@@ -74,4 +75,9 @@
             navigationManager.NavigateTo("/");
     }
 
+    protected override void OnInitialized()
+    {
+        Language.InitLocalizedComponent(this);
+        base.OnInitialized();
+    }
 }

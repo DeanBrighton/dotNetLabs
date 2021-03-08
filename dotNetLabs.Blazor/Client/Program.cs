@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using AKSoftware.Localization.MultiLanguages;
+using System.Reflection;
 
 namespace dotNetLabs.Blazor.Client
 {
@@ -46,6 +48,8 @@ namespace dotNetLabs.Blazor.Client
 
             builder.Services.AddBlazorFluentUI();
             builder.Services.AddAuthorizationCore();
+
+            builder.Services.AddLanguageContainer(Assembly.GetExecutingAssembly());
 
 
 

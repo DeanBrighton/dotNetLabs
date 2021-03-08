@@ -2,6 +2,8 @@
 @inherits LayoutComponentBase
 @inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager navigationManager 
+@inject ILanguageContainerService Language
+
 
 <BFUStack Horizontal="true" Style="width:100%;">
     <BFUResponsiveLayout MinWidth="ResponsiveMode.Medium.ToMinCssValue()">
@@ -34,7 +36,7 @@
                         <AuthorizeView>
                             <Authorized>
                                 @{
-                                    string greeting = $"Welcome, {context.User.FindFirst(System.Security.Claims.ClaimTypes.GivenName).Value}";
+                                    string greeting = $"{Language["Auth:Welcome"]}, {context.User.FindFirst(System.Security.Claims.ClaimTypes.GivenName).Value}";
                                 }
                                 <BFUPrimaryButton Text="@greeting"
                                                       Split="true"
@@ -43,7 +45,7 @@
 
                             </Authorized>
                             <NotAuthorized>
-                                <BFUPrimaryButton Text="Register"
+                                <BFUPrimaryButton Text="@Language["Auth:Register"]"
                                                   Split="true"
                                                   MenuItems="AccountMenuProperties"
                                                   OnClick=@(() =>  navigationManager.NavigateTo("/auth/register") ) />
@@ -274,7 +276,7 @@
                 new BFUContextualMenuItem()
                 {
                     Key = "Logout",
-                    Text = "Logout",
+                    Text = Language["Auth:Logout"],
                     IconName="User",
                     OnClick= async (e) => await LogoutAsync(e)
                 }
@@ -291,7 +293,7 @@
                 }
             };
 
-
+        Language.InitLocalizedComponent(this);
         return base.OnInitializedAsync();
     }
 
