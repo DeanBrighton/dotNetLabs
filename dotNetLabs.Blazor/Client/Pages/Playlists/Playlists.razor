@@ -1,0 +1,82 @@
+﻿@page "/playlists"
+@inject ILanguageContainerService language
+@inject HttpClient httpClient
+@inject NavigationManager navigationManager
+
+
+<h3>@language["Playlists:Title"]</h3>
+
+<BFUStack Horizontal="true">
+    <BFUStackItem Style="width:30%">
+        <h2>@language["Playlists:Title"]</h2>
+        <PlaylistsCollection OnSelectPlaylist="OnSelectPlaylist" />
+    </BFUStackItem>
+    <BFUStackItem Style="width:70%">
+        <h2>Videos</h2>
+        @if (isBusy)
+        {
+            <BFUSpinner Size="SpinnerSize.Large" />
+        }
+
+        <div class="ms-Grid">
+            <div class="ms-Grid" dir="ltr">
+                @if (videos != null)
+                {
+                    @foreach (var video in videos)
+                    {
+                        <div class="ms-Grid-col ms-sm12 ms-md6 ms-lg3">
+                            <VideoTicket Video="@video" OnTicketClicked='() => navigationManager.NavigateTo($"/videos/details/{video.Id}")' />
+                        </div>
+                    }
+
+                }
+            </div>
+        </div>
+
+
+
+
+    </BFUStackItem>
+</BFUStack>
+
+
+
+
+@code {
+    private bool isBusy = false;
+    private IEnumerable<VideoDetail> videos = null;
+
+
+    private async Task FetchPlaylistVideosAsync(string selectedPlaylistID)
+    {
+        isBusy = true;
+
+        try
+        {
+            var result = await httpClient.GetFromJsonAsync<OperationResponse<PlaylistDetail>>($"/api/playlists/{selectedPlaylistID}");
+            if (result.IsSuccess)
+            {
+                videos = result.Data.Videos;
+
+            }
+            else
+            {
+                //todo: Show an error
+            }
+
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        isBusy = false;
+    }
+
+    private async Task OnSelectPlaylist(PlaylistDetail playlist)
+    {
+        await FetchPlaylistVideosAsync(playlist.Id);
+    }
+
+
+}

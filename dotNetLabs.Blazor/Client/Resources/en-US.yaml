@@ -19,3 +19,9 @@ Register:
  Lastname: Last Name
 Videos:
  Title: Our Videos
+ ShowMore: Show more videos
+ AllLoaded: End of video list
+Playlists:
+ Title: Playlists
+ ShowMore: Show more playlists
+ AllLoaded: End of playlists

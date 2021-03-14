@@ -7,7 +7,8 @@
     background-color:lightblue;
 }
     .video-card img {
-        width: 100%;
+        width: 80%;
+        padding: 5px 5px 5px 5px;
     }
     .video-card.card-content {
         padding: 0px 0px 1px 7px;

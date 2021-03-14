@@ -23,7 +23,7 @@ namespace dotNetLabs.Blazor.Client
             builder.RootComponents.Add<App>("#app");
 
             //Init the HTTP client
-            //Added custom HTTP client from Microsoft.Extensions.Http... Note sure why though.
+            //Added custom HTTP client from Microsoft.Extensions.Http... This is used to inject the bearer token into the http request.
             // to have an different HTTP handler for each API the client may call.
             builder.Services.AddHttpClient("dotNetLabs.Api",client =>
             {

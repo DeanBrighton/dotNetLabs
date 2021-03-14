@@ -22,36 +22,66 @@
                     <VideoTicket Video="@video" OnTicketClicked="OnVideoClicked" />
                 </div>
             }
+
         }
     </div>
+
+    <div class="ms-Grid-row">
+
+        <div class="ms-Grid-col ms-sm4 ms-smPush4">
+
+            @if (isMoreAvailable && !isBusy)
+            {
+                <BFUButtonBase Text="@language["Videos:ShowMore"]" @onclick="LoadMoreVideosAsync" />
+            }else if(!isBusy)
+            {
+                <p>@language["Videos:AllLoaded"]</p>
+            }
+
+        </div>
+
+    </div>
+
 </div>
 
-<!--pagination-->
+
+
 
 @code {
     private bool isBusy = false;
-    private IEnumerable<VideoDetail> videos = null;
+    private List<VideoDetail> videos = null;
+    private int currentPageNumber = 1;
+    private int totalPageCount = 1;
+    private bool isMoreAvailable = false;
 
     protected override async Task OnInitializedAsync()
     {
-        await FetchVideosAsync();
+        videos = (await FetchVideosAsync()).ToList();
     }
 
-    private async Task FetchVideosAsync()
+    private async Task<IEnumerable<VideoDetail>> FetchVideosAsync()
     {
         isBusy = true;
 
         try
         {
-            var response = await httpClient.GetFromJsonAsync<CollectionResponse<VideoDetail>>("/api/videos/getall");
+            var response = await httpClient.GetFromJsonAsync<CollectionResponse<VideoDetail>>($"/api/videos/getall?pageNumber={currentPageNumber}&pageSize=12");
             if (response.IsSuccess)
             {
-                videos = response.Records;
+
+                currentPageNumber = response.PageNumber.Value;
+                totalPageCount = response.PageCount.Value;
+
+                if(currentPageNumber+1 <= totalPageCount) { isMoreAvailable = true; } else { isMoreAvailable = false; }
+                isBusy = false;
+                return response.Records;
+
             }
             else
             {
                 //TODO: Show an error message
-
+                isBusy = false;
+                return null;
             }
         }
         catch (Exception ex)
@@ -59,9 +89,23 @@
             Console.WriteLine(ex.Message);
 
         }
-
         isBusy = false;
+        return null;
+
     }
+
+    private async Task LoadMoreVideosAsync()
+    {
+        currentPageNumber++;
+
+        var result = await FetchVideosAsync();
+        if(result != null)
+        {
+            videos.AddRange(result);
+        }
+
+    }
+
 
     private void OnVideoClicked(VideoDetail video)
     {
