@@ -1,0 +1,59 @@
+﻿@inject HttpClient httpClient
+@inject ILanguageContainerService language
+
+<h3>Comments</h3>
+
+<div class="comment-form">
+    <EditForm Model="model">
+        <div class="textFieldDiv">
+            <BFUTextField Label="Comment" @bind-Value="model.Content" />
+        </div>
+        <BFUButtonBase Text="Submit" />
+
+    </EditForm>
+
+</div>
+
+<div class="comments-list">
+    @if (CommentsList != null)
+    {
+        @foreach (var item in CommentsList)
+        {
+
+            <CommentCard commentDetail="item" />
+
+            @if (item.Replys != null && item.Replys.Any())
+            {
+                foreach (var reply in item.Replys)
+                {
+                    <CommentCard commentDetail="reply" IsReply="true" />
+                }
+            }
+        }
+    }
+</div>
+
+
+@code {
+
+    [Parameter]
+    public List<CommentDetail> CommentsList { get; set; }
+
+    [Parameter]
+    public string VideoId { get; set; }
+
+    [Parameter]
+    public EventCallback<CommentDetail> OnCommentSubmitted { get; set; }
+
+
+
+    private CommentDetail model = new CommentDetail();
+
+    protected override void OnInitialized()
+    {
+        model.VideoId = VideoId;
+
+    }
+
+
+}

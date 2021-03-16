@@ -1,0 +1,11 @@
+﻿.comments-list{
+
+    border: 1px solid gray;
+    margin: 2px;
+    padding: 2px;
+    overflow-y: scroll;
+    max-height:500px;
+
+
+
+}

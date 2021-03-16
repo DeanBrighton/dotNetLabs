@@ -1,0 +1,94 @@
+﻿@page "/videos/details/{id}"
+@inject NavigationManager navigationManager
+@inject HttpClient httpClient
+
+@if (isBusy)
+{
+    <BFUSpinner Size="SpinnerSize.Large" />
+}
+else if(videoDetail != null)
+{
+
+    <BFUStack Horizontal="true">
+        <BFUStackItem Style="width:60%">
+
+            <h3>@videoDetail.Title</h3>
+            <hr />
+            <!--Video Frame here-->
+
+            <iframe style="width:95%"
+                    height="500"
+                    src="@videoDetail.VideoURL"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+            <hr />
+            <ul>
+                <li>@videoDetail.Description</li>
+                <li>@videoDetail.Category</li>
+                <li>@videoDetail.PublishingDate</li>
+                <li>@videoDetail.VideoURL</li>
+
+            </ul>
+
+
+        </BFUStackItem>
+        <BFUStackItem Style="width:40%">
+
+
+            <Comments VideoId="@id" CommentsList="@commentsList"/>
+
+
+        </BFUStackItem>
+
+    </BFUStack>
+
+}
+
+
+@code {
+
+    [Parameter]
+    public string id { get; set; }
+
+    private bool isBusy = false;
+    private VideoDetail videoDetail = null;
+
+    private List<CommentDetail> commentsList => videoDetail?.Comments?.ToList();
+
+    private async Task FetchVideoAsync(string id)
+    {
+        isBusy = true;
+
+        try
+        {
+            var result = await httpClient.GetFromJsonAsync<OperationResponse<VideoDetail>>($"/api/videos/{id}");
+            if (result.IsSuccess)
+            {
+                videoDetail = result.Data;
+                
+            }
+            else
+            {
+                //todo:Show an error
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+
+        isBusy = false;
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            navigationManager.NavigateTo("/videos");
+        else
+            await FetchVideoAsync(id);
+    }
+
+}

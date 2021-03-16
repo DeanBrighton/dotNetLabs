@@ -1,0 +1,22 @@
+﻿
+
+<div class="comment-card ms-depth-8 @(IsReply ? "reply-comment":"")">
+    <h4>@commentDetail.Username</h4>
+    <p>@commentDetail.Content</p>
+</div>
+
+<!--Reply here-->
+
+
+
+
+@code {
+
+    [Parameter]
+    public CommentDetail commentDetail { get; set; }
+
+    [Parameter]
+    public bool IsReply { get; set; }
+
+
+}

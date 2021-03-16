@@ -21,6 +21,10 @@ Videos:
  Title: Our Videos
  ShowMore: Show more videos
  AllLoaded: End of video list
+VideoPage:
+ Title: Video Page
+
+
 Playlists:
  Title: Playlists
  ShowMore: Show more playlists
